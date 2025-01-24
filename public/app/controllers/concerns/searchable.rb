@@ -87,6 +87,7 @@ module Searchable
     advanced_query_builder = AdvancedQueryBuilder.new
     @search[:q].each_with_index { |query, i|
       query.gsub!(/\[\]/x) { |c| "\\" + c }
+      query.gsub!(/\&amp\;/,"&")
       query = '*' if query.blank?
       have_query = true
       op = @search[:op][i]
