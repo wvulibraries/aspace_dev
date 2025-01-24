@@ -110,7 +110,8 @@ module SearchAndBrowseColumnConfig
       "create_time" => {:field => "create_time", :sortable => true},
       "user_mtime" => {:field => "user_mtime", :sortable => true},
       "audit_info" => {:field => "audit_info", :sort_by => ["create_time", "user_mtime"]},
-      "uri" => {:field => "uri", :sortable => true}
+      "uri" => {:field => "uri", :sortable => true},
+      "representative_file_version" => {:field => "representative_file_version", :sortable => false}
     },
     "location" => {
       "title" => {:field => "title", :sortable => true, :sort_by => "title_sort"},
@@ -248,6 +249,19 @@ module SearchAndBrowseColumnConfig
       "context" => {:field => "context"},
       "audit_info" => {:field => "audit_info", :sort_by => ["create_time", "user_mtime"]},
       "uri" => {:field => "uri", :sortable => true}
+    },
+    "top_container_mgmt" => {
+      "resource_accession" => {:field => "context", :sortable => true},
+      "series" => {:field => "series_level_u_sstr", :sortable => true},
+      "container_profile" => {:field => ":container_profile_display_string", :sortable => true},
+      "type" => {:field => "type", :sortable => true},
+      "indicator" => {:field => "indicator", :sortable => true},
+      "barcode" => {:field => "barcode", :sortable => true},
+      "internal_note" => {:field => "internal_note", :sortable => true},
+      "location" => {:field => "location", :sortable => true},
+      "restricted" => {:field => "restricted", :sortable => true},
+      "ils_holding_id" => {:field => "ils_holding_id", :sortable => true},
+      "exported_to_ils" => {:field => "exported_to_ils", :sortable => true},
     },
     "job" => {
       "status" => {:field => "status", :sortable => true},

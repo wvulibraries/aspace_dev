@@ -12,7 +12,7 @@ class Record
               :identifier, :classifications, :level, :other_level, :linked_digital_objects,
               :container_titles_and_uris
 
-  attr_accessor :criteria
+  attr_accessor :criteria, :highlights
 
   ABSTRACT = %w(abstract scopecontent)
 
@@ -34,7 +34,6 @@ class Record
 
     @level = raw['level']
     @other_level = json['other_level']
-
     @display_string = parse_full_title
     @container_display = parse_container_display
     @container_summary_for_badge = parse_container_summary_for_badge
@@ -51,6 +50,30 @@ class Record
     @classifications = parse_classifications
     @agents = parse_agents(subjects)
     @extents = parse_extents
+  end
+
+  def apply_highlighting
+    if highlights.key?('title') && highlights['title'].length == 1
+      @display_string = highlights['title'][0]
+    end
+
+    # Exclude any redundant fields below that are not meant to be used in the public interface.
+    exclude_fields = [
+      'title',
+      'notes',
+      'summary',
+      'agents',
+      'agents_text',
+      'repository',
+      'used_within_repository',
+      'used_within_published_repository',
+      'classification_uris',
+      'top_container_uri_u_sstr'
+    ]
+
+    @highlights = highlights.reject do |key, _|
+      exclude_fields.include?(key)
+    end
   end
 
   def [](k)
@@ -87,7 +110,7 @@ class Record
     unless infinite_item || json['title_inherited'].blank? || (json['display_string'] || '') == json['title']
       return "#{json['title']}, #{json['display_string']}"
     end
-    return process_mixed_content(json['display_string'] || json['title'], :preserve_newlines => true)
+    return process_mixed_content_title(json['display_string'] || json['title'])
   end
 
   private
@@ -321,7 +344,11 @@ class Record
         display << I18n.t('extent_dims', :dimensions => ext['dimensions']) unless ext['dimensions'].blank?
 
         inherited = ext.respond_to?(:dig) ? ext.dig('_inherited') : {}
-        results.push({'display' => display, '_inherited' => inherited})
+        results.push({
+          'display' => display,
+          '_inherited' => inherited,
+          'portion' => ext['portion']
+        })
       end
     end
 

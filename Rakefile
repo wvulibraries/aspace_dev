@@ -4,6 +4,7 @@
 require 'date'
 require 'digest'
 require 'git'
+require 'net/http'
 require 'json'
 require 'yaml'
 require_relative 'scripts/tasks/check'
@@ -11,7 +12,7 @@ require_relative 'scripts/tasks/release_notes'
 task default: ['check:multiple_gem_versions']
 
 namespace :check do
-  GEMS_PATH = File.join(__dir__, 'build', 'gems', 'jruby', '2.5.0', 'gems', '*')
+  GEMS_PATH = File.join(__dir__, 'build', 'gems', 'jruby', '3.1.0', 'gems', '*')
   LOCALES_DIRS = [
     File.join(__dir__, 'common', 'locales'),
     File.join(__dir__, 'common', 'locales', 'enums'),
@@ -28,8 +29,13 @@ namespace :check do
 
   # bundle exec rake check:multiple_gem_versions
   desc 'Check for multiple versions of a gem in the build directory'
-  task :multiple_gem_versions do
+  task :multiple_gem_versions, [:clean_gems] do
     Check.run(Check::Gems.new(GEMS_PATH))
+  end
+
+  desc 'Clean gems build directory'
+  task :clean_gems do
+    FileUtils.rm_rf(GEMS_PATH)
   end
 end
 
